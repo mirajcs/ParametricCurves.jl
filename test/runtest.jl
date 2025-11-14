@@ -471,43 +471,43 @@ end
 
 
 
-@testset "Normal Vector Tests" begin
-    @testset "Normal Test" begin
+@testset "Binormal Vector Tests" begin
+    @testset "Binormal Test" begin
         println("\n" * "="^50)
-        println("Normal tests")
+        println("Binormal tests")
         println("="^50)
 
     # ---------------------------------------------
-    # 1. Symbolic normal for unit circle in xy-plane
+    # 1. Symbolic binormal for unit circle in xy-plane
     # curve: r(t) = [cos(t), sin(t), 0]
     # Tangent: [-sin(t), cos(t), 0]
-    # Derivative of tangent: [-cos(t), -sin(t), 0]
-    # Normalized: [-cos(t), -sin(t), 0]
+    # Normal: [-cos(t), -sin(t), 0]
+    # Binormal: cross(T,N) = [0,0,1]
     # ---------------------------------------------
-    @testset "Symbolic Normal" begin
+    @testset "Symbolic Binormal" begin
         @syms t
         curve = [cos(t), sin(t), 0]
 
-        N = Normal(curve,t)
+        B = Binormal(curve, t)
 
-        # Expected symbolic normal
-        expected = [-cos(t), -sin(t), 0]
-        @test all(Ni == Ei for (Ni, Ei) in zip(N, expected))
-        @test all(Ni isa Sym for Ni in N)
+        # Expected symbolic binormal
+        expected = [0, 0, 1]
+        @test all(Bi == Ei for (Bi, Ei) in zip(B, expected))
+        @test all(Bi isa Sym for Bi in B)
     end
 
     # ---------------------------------------------
     # 2. Numeric evaluation at t_val = π/4
     # ---------------------------------------------
-    @testset "Numeric Normal at t_val" begin
+    @testset "Numeric Binormal at t_val" begin
         @syms t
         curve = [cos(t), sin(t), 0]
 
         t_val = pi/4
-        N_val = Normal(curve,t, t_val)
+        B_val = Binormal(curve, t, t_val)
 
-        expected_val = [-sqrt(2)/2, -sqrt(2)/2, 0]
-        @test all(isapprox(float(Ni), float(Ei); atol=1e-6) for (Ni, Ei) in zip(N_val, expected_val))
+        expected_val = [0.0, 0.0, 1.0]
+        @test all(isapprox(float(Bi), float(Ei); atol=1e-6) for (Bi, Ei) in zip(B_val, expected_val))
     end
 
     # ---------------------------------------------
@@ -516,8 +516,8 @@ end
     @testset "Dimension check" begin
         @syms t
         curve = [t, t^2, t^3]
-        N = Normal(curve,t)
-        @test length(N) == 3
+        B = Binormal(curve, t)
+        @test length(B) == 3
     end
 
     # ---------------------------------------------
@@ -526,10 +526,11 @@ end
     @testset "Dimension errors" begin
         @syms t
         bad_curve = [t, t^2]  # 2D
-        @test_throws AssertionError Normal(bad_curve,t)
+        @test_throws AssertionError Binormal(bad_curve,t)
     end
 end 
 end
+
 
 
 

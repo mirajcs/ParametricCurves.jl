@@ -2,7 +2,7 @@ module VectorUtils
 
 greet() = print("Hello Geometrician")
 
-export Norm, Normalize, Dot, Cross, Angle, Projection, ParametricLine, PlaneEquation, ArcLength, ArcLengthParametrization, Tangent, Curvature, Normal
+export Norm, Normalize, Dot, Cross, Angle, Projection, ParametricLine, PlaneEquation, ArcLength, ArcLengthParametrization, Tangent, Curvature, Normal, Binormal
 
 
 using LinearAlgebra, SymPy, QuadGK
@@ -255,6 +255,20 @@ function Normal(curve::Vector, t::Sym, t_val = nothing)
     end
     return N 
     
+end
+
+"""
+Binormal vector is given by B(t) = T(t) x N(T)
+"""
+
+function Binormal(curve::Vector, t::Sym, t_val = nothing)
+    @assert length(curve) == 3
+    B_vec = simplify(Cross(Tangent(curve,t) , Normal(curve, t)))
+
+    if t_val !== nothing
+        B_vec = [simplify(subs(Bi, t => t_val)) for Bi in B_vec]
+    end
+    return B_vec 
 end
 
 
