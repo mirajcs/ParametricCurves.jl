@@ -38,7 +38,7 @@ jobs:
           using Pkg;
           Pkg.develop(PackageSpec(path=pwd()));
           Pkg.instantiate();
-          ' # <-- CRITICAL: The closing single quote is here
+          ' 
           
       # Step to build and deploy the documentation
       - name: Build and deploy
@@ -46,6 +46,11 @@ jobs:
           # Required for Documenter to deploy via GitHub Actions
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: julia --project=docs/ docs/make.jl
+
+      - name: Upload Documenter Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './docs/build'
 
   # This job publishes the built documentation artifact to GitHub Pages
   deploy:
