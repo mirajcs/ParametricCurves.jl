@@ -3,46 +3,51 @@ name: Documentation
 on:
   push:
     branches:
-      - main # or 'master'
+      - main # Your main branch
     tags:
-      - v* # Tags like v1.0.0 will trigger versioned documentation
+      - v* # Tags like v1.1.0 will trigger versioned documentation
   pull_request:
     branches:
-      - main # or 'master'
+      - main
 
 permissions:
   contents: read
-  pages: write # Critical for the new GitHub Pages Action
-  id-token: write # Critical for the new GitHub Pages Action
+  pages: write # Critical for GitHub Pages deployment
+  id-token: write # Critical for GitHub Pages deployment
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: julia-actions/setup-julia@v2
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Julia (v1.12)
+        uses: julia-actions/setup-julia@v2
         with:
-          version: '1.12' # Set to your desired Julia version
+          version: '1.12' # Using your specified Julia version
+          
+      # Fixes the PyCall/SymPy error by installing the Python package via pip
       - name: Install Python Dependencies (sympy)
         run: |
-          # The -m flag ensures pip is run as a module, which is robust
           python3 -m pip install sympy
-          
+
       # Step to install Documenter.jl and your package dependencies
       - name: Install dependencies
         run: julia --project=docs/ -e '
           using Pkg;
           Pkg.develop(PackageSpec(path=pwd()));
           Pkg.instantiate();
-         
+          ' # <-- CRITICAL: The closing single quote is here
+          
       # Step to build and deploy the documentation
       - name: Build and deploy
         env:
-          # Required to enable Documenter to deploy via GitHub Actions
+          # Required for Documenter to deploy via GitHub Actions
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: julia --project=docs/ docs/make.jl
 
-  # This job handles the final step of publishing the artifact
+  # This job publishes the built documentation artifact to GitHub Pages
   deploy:
     needs: build
     runs-on: ubuntu-latest
