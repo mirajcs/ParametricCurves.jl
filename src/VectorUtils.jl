@@ -461,16 +461,15 @@ end
 """
     FrenetSerret(curve::Vector, t::Sym, t_val=nothing)
 
-    Compute the Frenet-Serret frame (Tangent, Normal, Binormal).
+Compute the Frenet-Serret frame (Tangent, Normal, Binormal).
 
-    #Arguments 
-    - 'curve::Vector': 3D Parametric curve components
-    - 't::Sym': Parameter symbol
-    - 't_val': Optional numeric value to evaluate at
+#Arguments 
+- 'curve::Vector': 3D Parametric curve components
+- 't::Sym': Parameter symbol
+- 't_val': Optional numeric value to evaluate at
 
-    #Returns 
-    Tuple of (Tangent, Normal, Binormal) vectors. 
-
+#Returns 
+Tuple of (Tangent, Normal, Binormal) vectors. 
 """
 
 function FrenetSerret(curve::Vector, t::Sym, t_val=nothing)
