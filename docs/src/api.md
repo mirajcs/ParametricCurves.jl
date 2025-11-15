@@ -4,7 +4,7 @@
 
 ## Functions
 ```@autodocs
-Modules = [VectorUtils]
+Modules = [GeometryToolkit]
 ```
 
 ## Index

@@ -1,4 +1,4 @@
-# VectorUtils.jl
+# GeometryToolkit.jl
 
 [![Build Status](https://github.com/mirajcs/VectorUtils/workflows/CI/badge.svg)](https://github.com/mirajcs/VectorUtils/actions)
 [![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://mirajcs.github.io/VectorUtils/)
@@ -112,9 +112,9 @@ MIT License - see LICENSE file for details
 If you use VectorUtils.jl in your research, please cite:
 
 ```bibtex
-@software{vectorutils_jl,
+@software{geometrytoolkit_jl,
   author = {Miraj Samarakkody},
-  title = {VectorUtils.jl: Vector Calculus Tools for Parametric Curves},
+  title = {GeometryToolkit.jl: A Toolkit for Geometry},
   year = {2025},
   url = {https://github.com/mirajcs/VectorUtils.jl}
 }

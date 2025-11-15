@@ -1,7 +1,7 @@
 using Pkg
 Pkg.add("Test")
 using Test
-using VectorUtils
+using GeometryToolkit
 using SymPy
 using QuadGK
 
@@ -97,7 +97,7 @@ expected = [1 + 4t, 2 + 5t, 3 + 6t]
 
 
 #PlaneEquation 
-result1 = VectorUtils.PlaneEquation([2,4,-1],[2,3,4])
+result1 = PlaneEquation([2,4,-1],[2,3,4])
 expected1 =  2*x + 3*y + 4*z - 12
 @test isequal(result1,expected1)
 

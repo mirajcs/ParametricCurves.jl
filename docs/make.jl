@@ -1,9 +1,9 @@
 using Documenter
-using VectorUtils
+using GeometryToolkit  # Was: VectorUtils
 
 makedocs(
-    sitename = "VectorUtils.jl",
-    modules = [VectorUtils],
+    sitename = "GeometryToolkit.jl",
+    modules = [GeometryToolkit],  # Was: VectorUtils
     pages = [
         "Home" => "index.md",
         "API Reference" => "api.md"

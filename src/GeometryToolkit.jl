@@ -1,4 +1,4 @@
-module VectorUtils
+module GeometryToolkit
 
 greet() = print("Hello Geometrician")
 
@@ -464,14 +464,13 @@ end
 Compute the Frenet-Serret frame (Tangent, Normal, Binormal).
 
 # Arguments 
-- 'curve::Vector': 3D Parametric curve components
-- 't::Sym': Parameter symbol
-- 't_val': Optional numeric value to evaluate at
+- `curve::Vector`: 3D Parametric curve components
+- `t::Sym`: Parameter symbol
+- `t_val`: Optional numeric value to evaluate at
 
 # Returns 
-Tuple of (Tangent, Normal, Binormal) vectors. 
+Tuple of (Tangent, Normal, Binormal) vectors 
 """
-
 function FrenetSerret(curve::Vector, t::Sym, t_val=nothing)
     T = Tangent(curve, t, t_val)
     N = Normal(curve, t, t_val)
