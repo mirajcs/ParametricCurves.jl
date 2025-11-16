@@ -23,7 +23,7 @@ Pkg.add(url="https://github.com/mirajcs/VectorUtils")
 ## Quick Example
 
 ```julia
-using VectorUtils
+using GeometryToolkit
 
 # Define a circular helix
 r = [cos(t), sin(t), t]
