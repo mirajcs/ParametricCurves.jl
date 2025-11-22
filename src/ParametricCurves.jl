@@ -1,4 +1,4 @@
-module GeometryToolkit
+module ParametricCurves
 
 greet() = print("Hello Geometrician")
 

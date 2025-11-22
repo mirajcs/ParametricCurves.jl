@@ -1,7 +1,7 @@
 using Pkg
 Pkg.add("Test")
 using Test
-using GeometryToolkit
+using ParametricCurves
 using SymPy
 using QuadGK
 
