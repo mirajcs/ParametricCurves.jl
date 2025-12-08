@@ -44,9 +44,9 @@ N = Norm(r, t, t₀)
 ## Symbolic Computation
 
 ```julia
-using Symbolics
+using SymPy
 
-@variables t
+@syms t
 r_sym = [cos(t), sin(t), t]
 
 # Symbolic tangent
