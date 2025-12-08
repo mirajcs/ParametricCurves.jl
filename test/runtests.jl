@@ -809,6 +809,320 @@ end
 end
 
 
+@testset "Gradient Tests" begin
+    println("\n" * "="^50)
+    println("Gradient tests")
+    println("="^50)
+
+    @testset "Basic symbolic gradient" begin
+        @syms x y z
+        f = x^2 + 2*y*z + z^2
+        grad_f = Gradient(f, [x, y, z])
+
+        expected = [2*x, 2*z, 2*y + 2*z]
+        @test length(grad_f) == 3
+        @test all(isequal(grad_f[i], expected[i]) for i in 1:3)
+        println("✓ Basic symbolic gradient computed correctly")
+    end
+
+    @testset "2D gradient" begin
+        @syms x y
+        f = x^2 + y^2
+        grad_f = Gradient(f, [x, y])
+
+        expected = [2*x, 2*y]
+        @test length(grad_f) == 2
+        @test all(isequal(grad_f[i], expected[i]) for i in 1:2)
+        println("✓ 2D gradient works correctly")
+    end
+
+    @testset "Gradient of linear function" begin
+        @syms x y z
+        f = 3*x + 2*y - z
+        grad_f = Gradient(f, [x, y, z])
+
+        expected = [3, 2, -1]
+        @test all(isequal(grad_f[i], expected[i]) for i in 1:3)
+        println("✓ Linear function gradient is constant")
+    end
+
+    @testset "Gradient of constant function" begin
+        @syms x y z
+        f = Sym(5)
+        grad_f = Gradient(f, [x, y, z])
+
+        expected = [0, 0, 0]
+        @test all(isequal(grad_f[i], expected[i]) for i in 1:3)
+        println("✓ Constant function gradient is zero")
+    end
+
+    @testset "Gradient with trigonometric functions" begin
+        @syms x y
+        f = sin(x) + cos(y)
+        grad_f = Gradient(f, [x, y])
+
+        expected = [cos(x), -sin(y)]
+        @test isequal(grad_f[1], expected[1])
+        @test isequal(grad_f[2], expected[2])
+        println("✓ Trigonometric gradient computed correctly")
+    end
+
+    @testset "Gradient with exponential function" begin
+        @syms x y
+        f = exp(x*y)
+        grad_f = Gradient(f, [x, y])
+
+        expected = [y*exp(x*y), x*exp(x*y)]
+        @test simplify(grad_f[1] - expected[1]) == 0
+        @test simplify(grad_f[2] - expected[2]) == 0
+        println("✓ Exponential function gradient computed correctly")
+    end
+
+    @testset "Gradient with polynomial" begin
+        @syms x y z
+        f = x^3*y^2 + x*y*z + z^4
+        grad_f = Gradient(f, [x, y, z])
+
+        @test isequal(simplify(grad_f[1]), 3*x^2*y^2 + y*z)
+        @test isequal(simplify(grad_f[2]), 2*x^3*y + x*z)
+        @test isequal(simplify(grad_f[3]), x*y + 4*z^3)
+        println("✓ Polynomial gradient computed correctly")
+    end
+
+    @testset "Gradient with single variable" begin
+        @syms x
+        f = x^3 - 2*x^2 + x - 5
+        grad_f = Gradient(f, [x])
+
+        expected = [3*x^2 - 4*x + 1]
+        @test isequal(grad_f[1], expected[1])
+        println("✓ Single variable gradient works")
+    end
+
+    @testset "Gradient direction check" begin
+        @syms x y
+        f = x^2 + 4*y^2
+        grad_f = Gradient(f, [x, y])
+
+        # At point (1, 1), gradient should be [2, 8]
+        point_grad = [subs(grad_f[i], x => 1, y => 1) for i in 1:2]
+        @test point_grad == [2, 8]
+        println("✓ Gradient points in correct direction at (1,1)")
+    end
+
+    @testset "Gradient with mixed terms" begin
+        @syms x y z
+        f = x*y + y*z + z*x + x^2
+        grad_f = Gradient(f, [x, y, z])
+
+        @test isequal(grad_f[1], y + z + 2*x)
+        @test isequal(grad_f[2], x + z)
+        @test isequal(grad_f[3], y + x)
+        println("✓ Mixed terms gradient computed correctly")
+    end
+end
+
+@testset "Jacobian Tests" begin
+    println("\n" * "="^50)
+    println("Jacobian Matrix tests")
+    println("="^50)
+
+    @testset "Basic 2D→2D Jacobian" begin
+        @syms x y
+        funcs = [x^2 + y, x*y]
+        J = Jacobian(funcs, [x, y])
+
+        # Expected Jacobian:
+        # [2x,   1]
+        # [y,    x]
+        @test length(J) == 2
+        @test length(J[1]) == 2
+        @test isequal(J[1][1], 2*x)
+        @test isequal(J[1][2], 1)
+        @test isequal(J[2][1], y)
+        @test isequal(J[2][2], x)
+        println("✓ Basic 2D→2D Jacobian computed correctly")
+    end
+
+    @testset "3D→3D Jacobian" begin
+        @syms x y z
+        funcs = [x^2 + y, x*y*z, z^2]
+        J = Jacobian(funcs, [x, y, z])
+
+        # Expected Jacobian:
+        # [2x,   1,   0]
+        # [yz,   xz,  xy]
+        # [0,    0,   2z]
+        @test length(J) == 3
+        @test length(J[1]) == 3
+        @test isequal(J[1][1], 2*x)
+        @test isequal(J[1][2], 1)
+        @test isequal(J[1][3], 0)
+        @test isequal(J[2][1], y*z)
+        @test isequal(J[2][2], x*z)
+        @test isequal(J[2][3], x*y)
+        @test isequal(J[3][1], 0)
+        @test isequal(J[3][2], 0)
+        @test isequal(J[3][3], 2*z)
+        println("✓ 3D→3D Jacobian computed correctly")
+    end
+
+    @testset "Parametric curve Jacobian (3D→1D)" begin
+        @syms t
+        curve = [cos(t), sin(t), t^2]
+        J = Jacobian(curve, [t])
+
+        # Expected Jacobian:
+        # [-sin(t)]
+        # [cos(t)]
+        # [2t]
+        @test length(J) == 3
+        @test length(J[1]) == 1
+        @test isequal(J[1][1], -sin(t))
+        @test isequal(J[2][1], cos(t))
+        @test isequal(J[3][1], 2*t)
+        println("✓ Parametric curve Jacobian computed correctly")
+    end
+
+    @testset "Linear transformation Jacobian" begin
+        @syms x y z
+        # Linear transformation: [2x + y, x - z, y + 3z]
+        funcs = [2*x + y, x - z, y + 3*z]
+        J = Jacobian(funcs, [x, y, z])
+
+        # Expected Jacobian (constant):
+        # [2,  1,  0]
+        # [1,  0, -1]
+        # [0,  1,  3]
+        @test isequal(J[1][1], 2)
+        @test isequal(J[1][2], 1)
+        @test isequal(J[1][3], 0)
+        @test isequal(J[2][1], 1)
+        @test isequal(J[2][2], 0)
+        @test isequal(J[2][3], -1)
+        @test isequal(J[3][1], 0)
+        @test isequal(J[3][2], 1)
+        @test isequal(J[3][3], 3)
+        println("✓ Linear transformation Jacobian is constant")
+    end
+
+    @testset "Polar to Cartesian Jacobian" begin
+        @syms r θ
+        # Polar to Cartesian: x = r*cos(θ), y = r*sin(θ)
+        funcs = [r*cos(θ), r*sin(θ)]
+        J = Jacobian(funcs, [r, θ])
+
+        # Expected Jacobian:
+        # [cos(θ),  -r*sin(θ)]
+        # [sin(θ),   r*cos(θ)]
+        @test isequal(J[1][1], cos(θ))
+        @test isequal(simplify(J[1][2]), -r*sin(θ))
+        @test isequal(J[2][1], sin(θ))
+        @test isequal(simplify(J[2][2]), r*cos(θ))
+        println("✓ Polar to Cartesian Jacobian computed correctly")
+    end
+
+    @testset "Spherical coordinates Jacobian" begin
+        @syms r θ φ
+        # Spherical to Cartesian
+        funcs = [r*sin(φ)*cos(θ), r*sin(φ)*sin(θ), r*cos(φ)]
+        J = Jacobian(funcs, [r, θ, φ])
+
+        # Check dimensions
+        @test length(J) == 3
+        @test length(J[1]) == 3
+
+        # Check ∂x/∂r = sin(φ)*cos(θ)
+        @test isequal(simplify(J[1][1]), sin(φ)*cos(θ))
+        println("✓ Spherical coordinates Jacobian computed correctly")
+    end
+
+    @testset "Identity transformation" begin
+        @syms x y z
+        funcs = [x, y, z]
+        J = Jacobian(funcs, [x, y, z])
+
+        # Expected: Identity matrix
+        @test isequal(J[1][1], 1)
+        @test isequal(J[1][2], 0)
+        @test isequal(J[1][3], 0)
+        @test isequal(J[2][1], 0)
+        @test isequal(J[2][2], 1)
+        @test isequal(J[2][3], 0)
+        @test isequal(J[3][1], 0)
+        @test isequal(J[3][2], 0)
+        @test isequal(J[3][3], 1)
+        println("✓ Identity transformation Jacobian is identity matrix")
+    end
+
+    @testset "Single function Jacobian (gradient)" begin
+        @syms x y
+        # For a single function, Jacobian is the gradient (row vector)
+        f = x^2 + y^2
+        J = Jacobian([f], [x, y])
+
+        @test length(J) == 1
+        @test length(J[1]) == 2
+        @test isequal(J[1][1], 2*x)
+        @test isequal(J[1][2], 2*y)
+        println("✓ Single function Jacobian equals gradient")
+    end
+
+    @testset "Trigonometric functions Jacobian" begin
+        @syms x y
+        funcs = [sin(x)*cos(y), cos(x)*sin(y)]
+        J = Jacobian(funcs, [x, y])
+
+        @test isequal(J[1][1], cos(x)*cos(y))
+        @test isequal(simplify(J[1][2]), -sin(x)*sin(y))
+        @test isequal(simplify(J[2][1]), -sin(x)*sin(y))
+        @test isequal(J[2][2], cos(x)*cos(y))
+        println("✓ Trigonometric Jacobian computed correctly")
+    end
+
+    @testset "Exponential functions Jacobian" begin
+        @syms x y
+        funcs = [exp(x + y), exp(x - y)]
+        J = Jacobian(funcs, [x, y])
+
+        @test isequal(J[1][1], exp(x + y))
+        @test isequal(J[1][2], exp(x + y))
+        @test isequal(J[2][1], exp(x - y))
+        @test isequal(simplify(J[2][2]), -exp(x - y))
+        println("✓ Exponential functions Jacobian computed correctly")
+    end
+
+    @testset "Non-square Jacobian (2D→3D)" begin
+        @syms u v
+        # Parametric surface
+        funcs = [u*cos(v), u*sin(v), u^2]
+        J = Jacobian(funcs, [u, v])
+
+        # 3×2 Jacobian matrix
+        @test length(J) == 3
+        @test length(J[1]) == 2
+        @test isequal(J[1][1], cos(v))
+        @test isequal(simplify(J[1][2]), -u*sin(v))
+        @test isequal(J[2][1], sin(v))
+        @test isequal(simplify(J[2][2]), u*cos(v))
+        @test isequal(J[3][1], 2*u)
+        @test isequal(J[3][2], 0)
+        println("✓ Non-square 3×2 Jacobian computed correctly")
+    end
+
+    @testset "Polynomial Jacobian" begin
+        @syms x y
+        funcs = [x^3 + y^2, x*y^2 + x^2]
+        J = Jacobian(funcs, [x, y])
+
+        @test isequal(J[1][1], 3*x^2)
+        @test isequal(J[1][2], 2*y)
+        @test isequal(J[2][1], y^2 + 2*x)
+        @test isequal(J[2][2], 2*x*y)
+        println("✓ Polynomial Jacobian computed correctly")
+    end
+end
+
 println("\n" * "="^50)
 println("All tests completed!")
 println("="^50)

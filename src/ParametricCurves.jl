@@ -2,7 +2,7 @@ module ParametricCurves
 
 greet() = print("Hello Geometrician")
 
-export Norm, Normalize, Dot, Cross, Angle, Projection, ParametricLine, PlaneEquation, ArcLength, ArcLengthParametrization, Tangent, Curvature, Normal, Binormal, Torsion, FrenetSerret, Acceleration
+export Norm, Normalize, Dot, Cross, Angle, Projection, ParametricLine, PlaneEquation, ArcLength, ArcLengthParametrization, Tangent, Curvature, Normal, Binormal, Torsion, FrenetSerret, Acceleration, Gradient, Jacobian, JacobianDet
 
 using LinearAlgebra, SymPy, QuadGK
 
@@ -526,5 +526,126 @@ end
 
 
 
+"""
+    Gradient(f, vars::AbstractVector)
 
-end # module VectorUtils
+Compute the gradient vector of a scalar function f with respect to variables `vars`.
+
+The gradient is the vector of partial derivatives: ∇f = [∂f/∂x, ∂f/∂y, ∂f/∂z, ...]
+
+# Arguments
+- `f`: Scalar symbolic or numeric function
+- `vars::AbstractVector`: Variables to differentiate with respect to
+
+# Returns
+Gradient vector as a symbolic expression
+
+# Examples
+```julia
+julia> @syms x y z
+julia> f = x^2 + 2*y*z + z^2
+julia> Gradient(f, [x, y, z])
+3-element Vector:
+ 2*x
+ 2*z
+ 2*y + 2*z
+```
+"""
+function Gradient(f, vars::AbstractVector)
+    return [diff(f, var) for var in vars]
+end
+
+"""
+    Jacobian(funcs::AbstractVector, vars::AbstractVector)
+
+Compute the Jacobian matrix of a vector-valued function with respect to variables `vars`.
+
+The Jacobian is the matrix of all first-order partial derivatives. For a function
+f: ℝⁿ → ℝᵐ represented as a vector [f₁, f₂, ..., fₘ], the Jacobian is an m×n matrix
+where entry J[i,j] = ∂fᵢ/∂xⱼ.
+
+# Arguments
+- `funcs::AbstractVector`: Vector of functions [f₁, f₂, ..., fₘ]
+- `vars::AbstractVector`: Variables to differentiate with respect to [x₁, x₂, ..., xₙ]
+
+# Returns
+Jacobian matrix as a vector of vectors (m×n matrix)
+
+# Examples
+```julia
+julia> @syms x y z
+julia> funcs = [x^2 + y, x*y*z, z^2]
+julia> Jacobian(funcs, [x, y, z])
+3×3 Matrix:
+ 2*x    1      0
+ y*z    x*z    x*y
+ 0      0      2*z
+
+julia> # Jacobian for a parametric curve
+julia> @syms t
+julia> curve = [cos(t), sin(t), t^2]
+julia> Jacobian(curve, [t])
+3×1 Matrix:
+ -sin(t)
+ cos(t)
+ 2*t
+```
+"""
+function Jacobian(funcs::AbstractVector, vars::AbstractVector)
+    m = length(funcs)
+    n = length(vars)
+
+    # Create Jacobian matrix directly as a matrix
+    J = [diff(funcs[i], vars[j]) for i in 1:m, j in 1:n]
+
+    return J
+end
+
+"""
+    JacobianDet(funcs::AbstractVector, vars::AbstractVector)
+
+Compute the determinant of the Jacobian matrix and return the simplified result.
+
+This function computes the Jacobian matrix of the vector-valued function `funcs`
+with respect to variables `vars`, then calculates and simplifies its determinant.
+
+# Arguments
+- `funcs::AbstractVector`: Vector of functions [f₁, f₂, ..., fₙ]
+- `vars::AbstractVector`: Variables to differentiate with respect to [x₁, x₂, ..., xₙ]
+
+# Note
+The Jacobian matrix must be square for the determinant to be defined. This requires
+`length(funcs) == length(vars)`.
+
+# Returns
+Simplified determinant of the Jacobian matrix
+
+# Examples
+```julia
+julia> @syms x y
+julia> funcs = [x^2 + y, x*y]
+julia> JacobianDet(funcs, [x, y])
+2*x^2 - y
+
+julia> @syms u v
+julia> transformation = [u*cos(v), u*sin(v)]
+julia> JacobianDet(transformation, [u, v])
+u
+```
+"""
+function JacobianDet(funcs::AbstractVector, vars::AbstractVector)
+    # Check that the matrix will be square
+    if length(funcs) != length(vars)
+        error("Jacobian determinant requires square matrix: length(funcs) must equal length(vars)")
+    end
+
+    # Compute Jacobian matrix
+    J = Jacobian(funcs, vars)
+
+    # Compute and simplify determinant
+    det_J = det(J)
+
+    return simplify(det_J)
+end
+
+end # module ParametricCurves
