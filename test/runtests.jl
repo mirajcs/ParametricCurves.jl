@@ -1128,7 +1128,8 @@ end
         det_J = JacobianDet(funcs, [x, y])
 
         # Expected: det([[2x, 1], [y, x]]) = 2x^2 - y
-        @test isequal(simplify(det_J), 2*x^2 - y)
+        expected = 2*x^2 - y
+        @test simplify(det_J - expected) == 0
         println("✓ Basic 2D Jacobian determinant computed correctly")
     end
 
@@ -1138,7 +1139,7 @@ end
         det_J = JacobianDet(funcs, [r, θ])
 
         # Expected: det([[cos(θ), -r*sin(θ)], [sin(θ), r*cos(θ)]]) = r
-        @test isequal(simplify(det_J), r)
+        @test simplify(det_J - r) == 0
         println("✓ Polar to Cartesian Jacobian determinant = r")
     end
 
@@ -1157,9 +1158,9 @@ end
         funcs = [2*x + y, x - z, y + 3*z]
         det_J = JacobianDet(funcs, [x, y, z])
 
-        # Expected: det([[2, 1, 0], [1, 0, -1], [0, 1, 3]]) = 5
-        @test isequal(det_J, 5)
-        println("✓ Linear transformation determinant = 5")
+        # Expected: det([[2, 1, 0], [1, 0, -1], [0, 1, 3]]) = 2*(0 - (-1)) - 1*(3 - 0) = 2 - 3 = -1
+        @test isequal(det_J, -1)
+        println("✓ Linear transformation determinant = -1")
     end
 
     @testset "Non-square Matrix Error" begin
@@ -1176,9 +1177,11 @@ end
         funcs = [r*sin(φ)*cos(θ), r*sin(φ)*sin(θ), r*cos(φ)]
         det_J = JacobianDet(funcs, [r, θ, φ])
 
-        # The determinant should be r^2*sin(φ)
-        @test isequal(simplify(det_J), r^2*sin(φ))
-        println("✓ Spherical coordinates determinant = r²sin(φ)")
+        # The determinant is -r^2*sin(φ) with this variable ordering [r, θ, φ]
+        # (Standard physics convention uses [r, φ, θ] which gives +r²sin(φ))
+        expected = -r^2*sin(φ)
+        @test simplify(det_J - expected) == 0
+        println("✓ Spherical coordinates determinant computed correctly")
     end
 
     @testset "Simplified Output" begin
@@ -1186,9 +1189,9 @@ end
         funcs = [x^2 - y^2, 2*x*y]
         det_J = JacobianDet(funcs, [x, y])
 
-        # Should be simplified: 2x(2x) - 2y(-2y) = 4x^2 + 4y^2
-        result = simplify(det_J)
-        @test isequal(result, 4*x^2 + 4*y^2)
+        # Should be simplified: 2x(2x) - (-2y)(2y) = 4x^2 + 4y^2
+        expected = 4*x^2 + 4*y^2
+        @test simplify(det_J - expected) == 0
         println("✓ Result is properly simplified")
     end
 
