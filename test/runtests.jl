@@ -935,12 +935,11 @@ end
         # Expected Jacobian:
         # [2x,   1]
         # [y,    x]
-        @test length(J) == 2
-        @test length(J[1]) == 2
-        @test isequal(J[1][1], 2*x)
-        @test isequal(J[1][2], 1)
-        @test isequal(J[2][1], y)
-        @test isequal(J[2][2], x)
+        @test size(J) == (2, 2)
+        @test isequal(J[1, 1], 2*x)
+        @test isequal(J[1, 2], 1)
+        @test isequal(J[2, 1], y)
+        @test isequal(J[2, 2], x)
         println("✓ Basic 2D→2D Jacobian computed correctly")
     end
 
@@ -953,17 +952,16 @@ end
         # [2x,   1,   0]
         # [yz,   xz,  xy]
         # [0,    0,   2z]
-        @test length(J) == 3
-        @test length(J[1]) == 3
-        @test isequal(J[1][1], 2*x)
-        @test isequal(J[1][2], 1)
-        @test isequal(J[1][3], 0)
-        @test isequal(J[2][1], y*z)
-        @test isequal(J[2][2], x*z)
-        @test isequal(J[2][3], x*y)
-        @test isequal(J[3][1], 0)
-        @test isequal(J[3][2], 0)
-        @test isequal(J[3][3], 2*z)
+        @test size(J) == (3, 3)
+        @test isequal(J[1, 1], 2*x)
+        @test isequal(J[1, 2], 1)
+        @test isequal(J[1, 3], 0)
+        @test isequal(J[2, 1], y*z)
+        @test isequal(J[2, 2], x*z)
+        @test isequal(J[2, 3], x*y)
+        @test isequal(J[3, 1], 0)
+        @test isequal(J[3, 2], 0)
+        @test isequal(J[3, 3], 2*z)
         println("✓ 3D→3D Jacobian computed correctly")
     end
 
@@ -976,11 +974,10 @@ end
         # [-sin(t)]
         # [cos(t)]
         # [2t]
-        @test length(J) == 3
-        @test length(J[1]) == 1
-        @test isequal(J[1][1], -sin(t))
-        @test isequal(J[2][1], cos(t))
-        @test isequal(J[3][1], 2*t)
+        @test size(J) == (3, 1)
+        @test isequal(J[1, 1], -sin(t))
+        @test isequal(J[2, 1], cos(t))
+        @test isequal(J[3, 1], 2*t)
         println("✓ Parametric curve Jacobian computed correctly")
     end
 
@@ -994,15 +991,15 @@ end
         # [2,  1,  0]
         # [1,  0, -1]
         # [0,  1,  3]
-        @test isequal(J[1][1], 2)
-        @test isequal(J[1][2], 1)
-        @test isequal(J[1][3], 0)
-        @test isequal(J[2][1], 1)
-        @test isequal(J[2][2], 0)
-        @test isequal(J[2][3], -1)
-        @test isequal(J[3][1], 0)
-        @test isequal(J[3][2], 1)
-        @test isequal(J[3][3], 3)
+        @test isequal(J[1, 1], 2)
+        @test isequal(J[1, 2], 1)
+        @test isequal(J[1, 3], 0)
+        @test isequal(J[2, 1], 1)
+        @test isequal(J[2, 2], 0)
+        @test isequal(J[2, 3], -1)
+        @test isequal(J[3, 1], 0)
+        @test isequal(J[3, 2], 1)
+        @test isequal(J[3, 3], 3)
         println("✓ Linear transformation Jacobian is constant")
     end
 
@@ -1015,10 +1012,10 @@ end
         # Expected Jacobian:
         # [cos(θ),  -r*sin(θ)]
         # [sin(θ),   r*cos(θ)]
-        @test isequal(J[1][1], cos(θ))
-        @test isequal(simplify(J[1][2]), -r*sin(θ))
-        @test isequal(J[2][1], sin(θ))
-        @test isequal(simplify(J[2][2]), r*cos(θ))
+        @test isequal(J[1, 1], cos(θ))
+        @test isequal(simplify(J[1, 2]), -r*sin(θ))
+        @test isequal(J[2, 1], sin(θ))
+        @test isequal(simplify(J[2, 2]), r*cos(θ))
         println("✓ Polar to Cartesian Jacobian computed correctly")
     end
 
@@ -1029,11 +1026,10 @@ end
         J = Jacobian(funcs, [r, θ, φ])
 
         # Check dimensions
-        @test length(J) == 3
-        @test length(J[1]) == 3
+        @test size(J) == (3, 3)
 
         # Check ∂x/∂r = sin(φ)*cos(θ)
-        @test isequal(simplify(J[1][1]), sin(φ)*cos(θ))
+        @test isequal(simplify(J[1, 1]), sin(φ)*cos(θ))
         println("✓ Spherical coordinates Jacobian computed correctly")
     end
 
@@ -1043,15 +1039,15 @@ end
         J = Jacobian(funcs, [x, y, z])
 
         # Expected: Identity matrix
-        @test isequal(J[1][1], 1)
-        @test isequal(J[1][2], 0)
-        @test isequal(J[1][3], 0)
-        @test isequal(J[2][1], 0)
-        @test isequal(J[2][2], 1)
-        @test isequal(J[2][3], 0)
-        @test isequal(J[3][1], 0)
-        @test isequal(J[3][2], 0)
-        @test isequal(J[3][3], 1)
+        @test isequal(J[1, 1], 1)
+        @test isequal(J[1, 2], 0)
+        @test isequal(J[1, 3], 0)
+        @test isequal(J[2, 1], 0)
+        @test isequal(J[2, 2], 1)
+        @test isequal(J[2, 3], 0)
+        @test isequal(J[3, 1], 0)
+        @test isequal(J[3, 2], 0)
+        @test isequal(J[3, 3], 1)
         println("✓ Identity transformation Jacobian is identity matrix")
     end
 
@@ -1061,10 +1057,9 @@ end
         f = x^2 + y^2
         J = Jacobian([f], [x, y])
 
-        @test length(J) == 1
-        @test length(J[1]) == 2
-        @test isequal(J[1][1], 2*x)
-        @test isequal(J[1][2], 2*y)
+        @test size(J) == (1, 2)
+        @test isequal(J[1, 1], 2*x)
+        @test isequal(J[1, 2], 2*y)
         println("✓ Single function Jacobian equals gradient")
     end
 
@@ -1073,10 +1068,10 @@ end
         funcs = [sin(x)*cos(y), cos(x)*sin(y)]
         J = Jacobian(funcs, [x, y])
 
-        @test isequal(J[1][1], cos(x)*cos(y))
-        @test isequal(simplify(J[1][2]), -sin(x)*sin(y))
-        @test isequal(simplify(J[2][1]), -sin(x)*sin(y))
-        @test isequal(J[2][2], cos(x)*cos(y))
+        @test isequal(J[1, 1], cos(x)*cos(y))
+        @test isequal(simplify(J[1, 2]), -sin(x)*sin(y))
+        @test isequal(simplify(J[2, 1]), -sin(x)*sin(y))
+        @test isequal(J[2, 2], cos(x)*cos(y))
         println("✓ Trigonometric Jacobian computed correctly")
     end
 
@@ -1085,10 +1080,10 @@ end
         funcs = [exp(x + y), exp(x - y)]
         J = Jacobian(funcs, [x, y])
 
-        @test isequal(J[1][1], exp(x + y))
-        @test isequal(J[1][2], exp(x + y))
-        @test isequal(J[2][1], exp(x - y))
-        @test isequal(simplify(J[2][2]), -exp(x - y))
+        @test isequal(J[1, 1], exp(x + y))
+        @test isequal(J[1, 2], exp(x + y))
+        @test isequal(J[2, 1], exp(x - y))
+        @test isequal(simplify(J[2, 2]), -exp(x - y))
         println("✓ Exponential functions Jacobian computed correctly")
     end
 
@@ -1099,14 +1094,13 @@ end
         J = Jacobian(funcs, [u, v])
 
         # 3×2 Jacobian matrix
-        @test length(J) == 3
-        @test length(J[1]) == 2
-        @test isequal(J[1][1], cos(v))
-        @test isequal(simplify(J[1][2]), -u*sin(v))
-        @test isequal(J[2][1], sin(v))
-        @test isequal(simplify(J[2][2]), u*cos(v))
-        @test isequal(J[3][1], 2*u)
-        @test isequal(J[3][2], 0)
+        @test size(J) == (3, 2)
+        @test isequal(J[1, 1], cos(v))
+        @test isequal(simplify(J[1, 2]), -u*sin(v))
+        @test isequal(J[2, 1], sin(v))
+        @test isequal(simplify(J[2, 2]), u*cos(v))
+        @test isequal(J[3, 1], 2*u)
+        @test isequal(J[3, 2], 0)
         println("✓ Non-square 3×2 Jacobian computed correctly")
     end
 
@@ -1115,11 +1109,97 @@ end
         funcs = [x^3 + y^2, x*y^2 + x^2]
         J = Jacobian(funcs, [x, y])
 
-        @test isequal(J[1][1], 3*x^2)
-        @test isequal(J[1][2], 2*y)
-        @test isequal(J[2][1], y^2 + 2*x)
-        @test isequal(J[2][2], 2*x*y)
+        @test isequal(J[1, 1], 3*x^2)
+        @test isequal(J[1, 2], 2*y)
+        @test isequal(J[2, 1], y^2 + 2*x)
+        @test isequal(J[2, 2], 2*x*y)
         println("✓ Polynomial Jacobian computed correctly")
+    end
+end
+
+@testset "JacobianDet Tests" begin
+    println("\n" * "="^50)
+    println("Jacobian Determinant tests")
+    println("="^50)
+
+    @testset "Basic 2D Jacobian Determinant" begin
+        @syms x y
+        funcs = [x^2 + y, x*y]
+        det_J = JacobianDet(funcs, [x, y])
+
+        # Expected: det([[2x, 1], [y, x]]) = 2x^2 - y
+        @test isequal(simplify(det_J), 2*x^2 - y)
+        println("✓ Basic 2D Jacobian determinant computed correctly")
+    end
+
+    @testset "Polar to Cartesian Determinant" begin
+        @syms r θ
+        funcs = [r*cos(θ), r*sin(θ)]
+        det_J = JacobianDet(funcs, [r, θ])
+
+        # Expected: det([[cos(θ), -r*sin(θ)], [sin(θ), r*cos(θ)]]) = r
+        @test isequal(simplify(det_J), r)
+        println("✓ Polar to Cartesian Jacobian determinant = r")
+    end
+
+    @testset "3D Identity Transformation" begin
+        @syms x y z
+        funcs = [x, y, z]
+        det_J = JacobianDet(funcs, [x, y, z])
+
+        # Expected: det(I) = 1
+        @test isequal(det_J, 1)
+        println("✓ Identity transformation determinant = 1")
+    end
+
+    @testset "Linear Transformation Determinant" begin
+        @syms x y z
+        funcs = [2*x + y, x - z, y + 3*z]
+        det_J = JacobianDet(funcs, [x, y, z])
+
+        # Expected: det([[2, 1, 0], [1, 0, -1], [0, 1, 3]]) = 5
+        @test isequal(det_J, 5)
+        println("✓ Linear transformation determinant = 5")
+    end
+
+    @testset "Non-square Matrix Error" begin
+        @syms u v
+        funcs = [u*cos(v), u*sin(v), u^2]  # 3 functions, 2 variables
+
+        # Should throw error for non-square matrix
+        @test_throws ErrorException JacobianDet(funcs, [u, v])
+        println("✓ Non-square matrix correctly throws error")
+    end
+
+    @testset "Spherical Coordinates Determinant" begin
+        @syms r θ φ
+        funcs = [r*sin(φ)*cos(θ), r*sin(φ)*sin(θ), r*cos(φ)]
+        det_J = JacobianDet(funcs, [r, θ, φ])
+
+        # The determinant should be r^2*sin(φ)
+        @test isequal(simplify(det_J), r^2*sin(φ))
+        println("✓ Spherical coordinates determinant = r²sin(φ)")
+    end
+
+    @testset "Simplified Output" begin
+        @syms x y
+        funcs = [x^2 - y^2, 2*x*y]
+        det_J = JacobianDet(funcs, [x, y])
+
+        # Should be simplified: 2x(2x) - 2y(-2y) = 4x^2 + 4y^2
+        result = simplify(det_J)
+        @test isequal(result, 4*x^2 + 4*y^2)
+        println("✓ Result is properly simplified")
+    end
+
+    @testset "Zero Determinant" begin
+        @syms x y
+        # Linearly dependent rows
+        funcs = [x + y, 2*x + 2*y]
+        det_J = JacobianDet(funcs, [x, y])
+
+        @test isequal(det_J, 0)
+        println("✓ Linearly dependent transformation has zero determinant")
     end
 end
 
