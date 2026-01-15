@@ -4,7 +4,7 @@ A Julia package for parametric curve computations.
 
 ## Overview
 
-GeometryToolkit.jl provides a convenient and efficient suite of functions for geometric computations in Julia, including:
+ParametricCurves.jl provides a convenient and efficient suite of functions for geometric computations in Julia, including:
 
 - Vector operations: Norm, normalization, dot products, and cross products
 - Geometric computations: Angles between vectors, projections, and distance calculations
