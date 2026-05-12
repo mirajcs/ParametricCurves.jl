@@ -115,7 +115,7 @@ If you use VectorUtils.jl in your research, please cite:
 @software{parametric_curves_jl,
   author = {Miraj Samarakkody},
   title = {ParametricCurves.jl: A Toolkit for Parametric Curves},
-  year = {2025},
+  year = {2026},
   url = {https://github.com/mirajcs/ParametricCurves.jl}
 }
 ```
