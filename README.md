@@ -110,13 +110,19 @@ MIT License - see LICENSE file for details
 
 ## Citation
 
-If you use VectorUtils.jl in your research, please cite:
+If you use ParametricCurves.jl in your research, please cite:
 
 ```bibtex
 @software{parametric_curves_jl,
   author = {Miraj Samarakkody},
   title = {ParametricCurves.jl: A Toolkit for Parametric Curves},
   year = {2026},
+  publisher = {Zenodo},
+  doi = {10.5281/zenodo.20140761},
   url = {https://github.com/mirajcs/ParametricCurves.jl}
 }
 ```
+
+## Acknowledgement
+
+This work was supported by the HBCU UP Implementation project, Award No. 2510537.
