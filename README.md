@@ -118,7 +118,7 @@ If you use ParametricCurves.jl in your research, please cite:
   title = {ParametricCurves.jl: A Toolkit for Parametric Curves},
   year = {2026},
   publisher = {Zenodo},
-  doi = {10.5281/zenodo.20140761},
+  doi = {https://doi.org/10.5281/zenodo.20288831},
   url = {https://github.com/mirajcs/ParametricCurves.jl}
 }
 ```
